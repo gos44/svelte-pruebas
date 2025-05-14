@@ -80,6 +80,9 @@ style:--buttonTextColor={textColor} {...props}>
 		}
 	.left-content {
 		margin-inline-end: 10px;
+		:global(svg){
+			color: #00ff4c;
+		}
 	}
 
 	.right-content {

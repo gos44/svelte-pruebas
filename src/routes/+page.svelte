@@ -4,9 +4,11 @@
     import DisplayName from "$lib/Components/DisplayName.svelte";
 	import RandomNumber from "$lib/Components/RandomNumber.svelte";
     import { AlarmCheck, Search } from 'lucide-svelte';
+    let html = `<h1>Hello World</h1>`;
 </script>
 
-
+<div class="wrapper">
+    {@html  html}
 <Button size="lg"  bgColor="blue" textColor="white">
 	{#snippet left(isHovered)}
 		{#if isHovered}
@@ -20,12 +22,18 @@
 		<AlarmCheck />
 	{/snippet}
 </Button>
+</div>
 <style>
     :global(body)
     {
         background-color: #000000;  
     }
-
+    .wrapper :global{
+    
+    h1{
+        color: #ffffff;
+    }
+    }
 
 </style>
 
