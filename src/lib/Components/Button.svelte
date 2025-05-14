@@ -1,42 +1,43 @@
 <script lang="ts">
-    import type { Snippet } from "svelte";
-    interface Props {
-        left?: Snippet<[boolean]>;
-        right?: Snippet;
-        children: Snippet<[boolean]>;
-        size?: 'sm' | 'lg';
-        shadow?:boolean;
+	import type { Snippet } from 'svelte';
+	import type { HTMLButtonAttributes } from 'svelte/elements';
+	let isLeftHovered = $state(false);
 
-    }
-    let {left,right,size = 'sm',shadow = false,children}:Props = $props();
-    let islefthorevered =$state(false);
+	type Props = HTMLButtonAttributes & {
+		left?: Snippet<[boolean]>;
+		right?: Snippet;
+		children: Snippet<[boolean]>;
+		size?: 'sm' | 'lg';
+		shadow?: boolean;
+	};
+	let { left, right, size = 'sm', shadow = false, children, ...props }: Props = $props();
 </script>
 
-<button class={{sm: size == 'sm' , lg: size == 'lg',shadow}}>
-    {#if left}
-    <div
-    role="presentation"
-    class="left-content"
-    onmouseenter={()=>{
-        islefthorevered = true; 
-    }}
-    onmouseleave={()=>{
-        islefthorevered = false;
-    }}
-    >
-    {@render left(islefthorevered)}
-    </div>
-    {/if}
-    {@render children(islefthorevered)}
-    {#if right}
-    <div class="right-content">
-    {@render right()}
-    </div>
-    {/if}
+<button class:sm={size == 'sm'} class:lg={size == 'lg'} class:shadow {...props}>
+	{#if left}
+		<div
+			role="presentation"
+			class="left-content"
+			onmouseenter={() => {
+				isLeftHovered = true;
+			}}
+			onmouseleave={() => {
+				isLeftHovered = false;
+			}}
+		>
+			{@render left(isLeftHovered)}
+		</div>
+	{/if}
+	{@render children(isLeftHovered)}
+	{#if right}
+		<div class="right-content">
+			{@render right()}
+		</div>
+	{/if}
 </button>
 
 <style lang="scss">
-    button {
+	 button {
         background-color: #d8c625;
         border: none;
         color: white;
