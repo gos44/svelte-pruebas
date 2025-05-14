@@ -7,7 +7,7 @@
 </script>
 
 
-<Button size="lg" disabled>
+<Button size="lg"  bgColor="blue" textColor="white">
 	{#snippet left(isHovered)}
 		{#if isHovered}
 			<Search />
@@ -20,3 +20,12 @@
 		<AlarmCheck />
 	{/snippet}
 </Button>
+<style>
+    :global(body)
+    {
+        background-color: #000000;  
+    }
+
+
+</style>
+
