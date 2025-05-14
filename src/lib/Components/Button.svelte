@@ -12,13 +12,13 @@
     let islefthorevered =$state(false);
 </script>
 
-<button class:sm={size === 'sm'} class:lg={size === 'lg'} class:shadow>
+<button class={{sm: size == 'sm' , lg: size == 'lg',shadow}}>
     {#if left}
     <div
     role="presentation"
     class="left-content"
     onmouseenter={()=>{
-        islefthorevered = true;
+        islefthorevered = true; 
     }}
     onmouseleave={()=>{
         islefthorevered = false;

@@ -17,7 +17,7 @@
 
 {/snippet}
 <!-- <Button left={left}>Click</Button> -->
-<Button size ="sm" shadow= {true}>
+<Button size ="lg" shadow  desabled>
     {#snippet left(isHoreverd:boolean)}
     {#if isHoreverd}
     <Search />
