@@ -1,21 +1,33 @@
 <script lang="ts">
     import type { Snippet } from "svelte";
     interface Props {
-        left?: Snippet;
+        left?: Snippet<[boolean]>;
         right?: Snippet;
-        children: Snippet;
-    }
-    let {left,right,children}:Props = $props();
+        children: Snippet<[boolean]>;
+        size?: 'sm' | 'lg';
+        shadow?:boolean;
 
+    }
+    let {left,right,size = 'sm',shadow = false,children}:Props = $props();
+    let islefthorevered =$state(false);
 </script>
 
-<button>
+<button class:sm={size === 'sm'} class:lg={size === 'lg'} class:shadow>
     {#if left}
-    <div class="left-content">
-    {@render left()}
+    <div
+    role="presentation"
+    class="left-content"
+    onmouseenter={()=>{
+        islefthorevered = true;
+    }}
+    onmouseleave={()=>{
+        islefthorevered = false;
+    }}
+    >
+    {@render left(islefthorevered)}
     </div>
     {/if}
-    {@render children()}
+    {@render children(islefthorevered)}
     {#if right}
     <div class="right-content">
     {@render right()}
@@ -23,9 +35,9 @@
     {/if}
 </button>
 
-<style>
+<style lang="scss">
     button {
-        background-color: #4CAF50;
+        background-color: #d8c625;
         border: none;
         color: white;
         padding: 15px 32px;
@@ -40,20 +52,33 @@
         display: flex;
         justify-content: center;
         align-items: center;
-    }
-    .left-content {
-        margin-inline-end: 10px;
-    }
-    .right-content {
-        margin-inline-start: 10px;
-    }
-</style>
+        &.sm {
+		height: 45px;
+	}
+	&.lg {
+		height: 45px;
+		font-size: 20px;
+	}
+	&.shadow {
+		box-shadow: 0 0 10px rgba(1, 1, 0, 3);
+	}
+    &:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+		}
+	&:hover {
+			background-image: linear-gradient(to right, #eb0e0e, #2600ff);
+			color: #fff;
+		}
+	&:active {
+			background-image: linear-gradient(to right, #a7af3b, #ffffff);
+		}
+	.left-content {
+		margin-inline-end: 10px;
+	}
 
-<!-- {#snippet bold(x:any)}
-        <b>{x}</b>
-    {/snippet}
-{#snippet sum(a:number, b:number)}
-    <span>{a} + {b}= {@render bold(a+b)};</span>
-{/snippet} -->
-<!-- {@render sum(2,2)}
-{@render bold('Mas text')} -->
+	.right-content {
+		margin-inline-start: 10px;
+	}
+}
+</style>

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Button from "$lib/Components/Button.svelte";
 	import Counte from "$lib/Components/Counter.svelte";
     import DisplayName from "$lib/Components/DisplayName.svelte";
@@ -17,11 +17,19 @@
 
 {/snippet}
 <!-- <Button left={left}>Click</Button> -->
-<Button>
-    {#snippet left()}
+<Button size ="sm" shadow= {true}>
+    {#snippet left(isHoreverd:boolean)}
+    {#if isHoreverd}
     <Search />
+    {:else}
+    <AlarmClock />
+    {/if}
     {/snippet}
-    Click
+    
+    {#snippet children(islefthorevered)}
+    Click {islefthorevered}
+    {/snippet}
+
     {#snippet right()}
     <AlarmClock />
     {/snippet}
