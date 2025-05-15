@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Button from '$lib/Components/Button.svelte';
+	import Button from './Button.svelte';
 
 	let {
 		notification,
