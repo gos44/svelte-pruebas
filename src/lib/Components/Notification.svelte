@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Button from './Button.svelte';
-
 	let {
 		notification,
 		onremove
@@ -13,7 +12,6 @@
 		};
 		onremove?: (id: string) => void;
 	} = $props();
-
 	const { title, body, date, id } = $derived(notification);
 	const dateObject = $derived(new Date(date));
 </script>
