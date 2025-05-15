@@ -1,28 +1,47 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
+	import type { HTMLAnchorAttributes } from 'svelte/elements';
+	
 	let isLeftHovered = $state(false);
+	let button: HTMLButtonElement | HTMLAnchorElement;
 
-	type Props = HTMLButtonAttributes & {
+	type Props =(
+	| (HTMLButtonAttributes & {href?:never})
+	| (HTMLAnchorAttributes & {href:string})) & {
 		left?: Snippet<[boolean]>;
 		right?: Snippet;
 		children: Snippet<[boolean]>;
 		size?: 'sm' | 'lg';
 		shadow?: boolean;
-		bgColor?: string;
-		textColor?: string;
+		onlefthover?: () => void;
+		
+
 	};
-	let { left, right, size = 'sm', shadow = false, children,bgColor,textColor, ...props }: Props = $props();
+	let { left, right, size = 'sm', shadow = false, children,onlefthover, ...props }: Props = $props();
+	export function focus(){
+		button.focus();
+	}
+	export function getButton(){
+		return button;
+	}
 </script>
 
-<button class:sm={size == 'sm'} class:lg={size == 'lg'} class:shadow 
-style:--buttongbColor={bgColor} 
-style:--buttonTextColor={textColor} {...props}>
+<svelte:element
+this={props.href? 'a':'button'}
+bind:this={button}
+class:sm={size == 'sm'}
+class:lg={size == 'lg'}
+class:shadow {...props}
+class="button"
+>
+<div class="flex">
 	{#if left}
 		<div
 			role="presentation"
 			class="left-content"
 			onmouseenter={() => {
+				onlefthover?.();
 				isLeftHovered = true;
 			}}
 			onmouseleave={() => {
@@ -38,11 +57,12 @@ style:--buttonTextColor={textColor} {...props}>
 			{@render right()}
 		</div>
 	{/if}
-</button>
+	</div>
+</svelte:element>
 
 <style lang="scss">
-	 button {
-        background-color: var(--buttongbColor,#d8c625);
+	 .button {
+        background-color: var(--buttonBgColor,#d8c625);
         border: none;
         color:var(--buttonTextColor,#fffffd);
         padding: 15px 32px;
@@ -53,6 +73,26 @@ style:--buttonTextColor={textColor} {...props}>
         font-weight: bold;
         margin: 4px 2px;
         cursor: pointer;
+		font-family: sans-serif;
+		.flex{
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		}
+		background-image: linear-gradient(to right, #a7af3b, #5f37f0);
+		transition: all 0.3s ease-in-out;
+		&:focus {
+			outline: none;
+		}
+		&:active {
+			transform: scale(0.95);
+		}
+		&:disabled {
+			background-color: #ccc;
+			color: #666;
+			cursor: not-allowed;
+		}
         border-radius: 4px;
         display: flex;
         justify-content: center;
@@ -76,13 +116,10 @@ style:--buttonTextColor={textColor} {...props}>
 			color: #fff;
 		}
 	&:active {
-			background-image: linear-gradient(to right, #a7af3b, #ffffff);
+			background-image: linear-gradient(to right, #a7af3b, #5f37f0);
 		}
 	.left-content {
 		margin-inline-end: 10px;
-		:global(svg){
-			color: #00ff4c;
-		}
 	}
 
 	.right-content {

@@ -5,11 +5,29 @@
 	import RandomNumber from "$lib/Components/RandomNumber.svelte";
     import { AlarmCheck, Search } from 'lucide-svelte';
     let html = `<h1>Hello World</h1>`;
+    let button:Button ;
+    $effect(() => {
+    // console.log(button)
+    button.getButton().focus();
+    });
 </script>
 
-<div class="wrapper">
+<div  class="wrapper">
     {@html  html}
-<Button size="lg"  bgColor="blue" textColor="white">
+    <div role="presentation" onclickcapture={()=>{
+        console.log('este evento es del div');
+    }}>
+<Button bind:this={
+    button
+}
+size="lg"
+href="https://www.google.com"
+--buttonBgColor="blue"
+--buttonTextColor="red"
+onclickcapture={(e) => {e.stopPropagation();
+console.log('este evento viene del boton');
+}}
+onlefthover={() => console.log('isLeftHovered')}>
 	{#snippet left(isHovered)}
 		{#if isHovered}
 			<Search />
@@ -23,10 +41,11 @@
 	{/snippet}
 </Button>
 </div>
+</div>
 <style>
     :global(body)
     {
-        background-color: #000000;  
+        background-color: #000000;
     }
     .wrapper :global{
     
@@ -34,6 +53,4 @@
         color: #ffffff;
     }
     }
-
 </style>
-
