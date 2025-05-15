@@ -1,56 +1,44 @@
 <script lang="ts">
-	import Button from "$lib/Components/Button.svelte";
-	import Counte from "$lib/Components/Counter.svelte";
-    import DisplayName from "$lib/Components/DisplayName.svelte";
-	import RandomNumber from "$lib/Components/RandomNumber.svelte";
-    import { AlarmCheck, Search } from 'lucide-svelte';
-    let html = `<h1>Hello World</h1>`;
-    let button:Button ;
-    $effect(() => {
-    // console.log(button)
-    button.getButton().focus();
-    });
+	import { get } from "svelte/store";
+const Target = {
+firstName:'Gos',
+lastName:'andes',
+occupations:[],
+
+get FullName(){
+    return `${this.firstName} ${this.lastName}`;
+},
+
+set occupation(value:string){
+    console.log(`adding ${value} to occupation`);
+    this.occupations.push(value);
+}
+}
+
+const handler = {
+    get(Target,prop){
+        // console.log(Target,props);
+        return prop in Target ? Target[prop]: 'NA';
+    },
+    set(Target,prop,value){
+        if(['firstName','lastName'].includes(prop)){
+           if(typeof value !== 'string'){
+                throw new TypeError(`Propety ${prop} must be a string`);
+            }
+        }
+        // console.log(`Setting: ${prop} = ${value}`);
+        Target[prop] = value;
+        return true;
+    },
+};
+const proxy = new Proxy(Target,handler);
+proxy.firstName = 51;
+console.log(proxy.firstName);
 </script>
 
-<div  class="wrapper">
-    {@html  html}
-    <div role="presentation" onclickcapture={()=>{
-        console.log('este evento es del div');
-    }}>
-<Button bind:this={
-    button
-}
-size="lg"
-href="https://www.google.com"
---buttonBgColor="blue"
---buttonTextColor="red"
-onclickcapture={(e) => {e.stopPropagation();
-console.log('este evento viene del boton');
-}}
-onlefthover={() => console.log('isLeftHovered')}>
-	{#snippet left(isHovered)}
-		{#if isHovered}
-			<Search />
-		{:else}
-			<AlarmCheck />
-		{/if}
-	{/snippet}
-	Text
-	{#snippet right()}
-		<AlarmCheck />
-	{/snippet}
-</Button>
-</div>
-</div>
 <style>
     :global(body)
     {
         background-color: #000000;
-    }
-    .wrapper :global{
-    
-    h1{
-        color: #ffffff;
-    }
     }
 </style>
