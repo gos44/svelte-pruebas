@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Notification from '$lib/Components/Notification.svelte';
 	import generateNotifications from '$lib/Utils/generation-notifications';
-	let notifications = $state(generateNotifications());
-    console.log(notifications);
+	let notifications = $state(generateNotifications(3));
+    $inspect(notifications);
 </script>
 
 <ul>
@@ -13,7 +13,7 @@
     }} />
 		</li>
 	{:else}
-		<p>No notifications</p>
+		<p>No hay notificationes</p>
 	{/each}
 </ul>
 
