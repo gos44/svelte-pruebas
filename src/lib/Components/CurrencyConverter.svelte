@@ -1,108 +1,128 @@
 <script lang="ts">
-	import { updated } from "$app/state";
-	import dummyRates from  "$lib/Utils/dummy-rates"
-	import {untrack} from 'svelte'
-	
-	let baseValue: number | undefined = $state(1);
-	let baseCurrency = $state('usd');
-	let baseRates = $derived(dummyRates[baseCurrency]);
-	let targetCurrency = $state('eur');
-	let targetValue: number | undefined = $state(calculateTarget());
+	class CurrencyConverter {
+		#baseValue: number | undefined = $state(1);
+		#baseCurrency = $state('usd');
+		baseRates: Record<string, number> = $state({});
+		targetCurrency = $state('eur');
+		#targetValue: number | undefined = $state();
+		currencies = $state({});
+		loading = $state(true);
+		error: string | undefined = $state();
 
-	function calculateTarget() {
-		return (
-			baseValue && baseRates[targetCurrency] && +(baseValue * baseRates[targetCurrency]).toFixed(3)
-		);
-	}
-	function calculateBase() {
-		return (
-			targetValue &&
-			baseRates[targetCurrency] &&
-			+(targetValue / baseRates[targetCurrency]).toFixed(3)
-		);
-	}
+		get baseValue() {
+			return this.#baseValue;
+		}
+		set baseValue(v) {
+			this.#baseValue = v && v < 0 ? 0 : v;
+			this.#targetValue = this.#calculateTarget();
+		}
 
-	function updateBaseValue(value: number) {
-		baseValue = value;
-		targetValue = calculateTarget();
-		console.log('Calculate Target value', targetValue);
+		get baseCurrency() {
+			return this.#baseCurrency;
+		}
+
+		set baseCurrency(v) {
+			this.#baseCurrency = v;
+			this.#fetchRates();
+		}
+
+		get targetValue() {
+			return this.#targetValue;
+		}
+		set targetValue(v) {
+			this.#targetValue = v;
+			this.#baseValue = this.#calculateBase();
+		}
+
+		constructor(baseValue: number, baseCurrency: string, targetCurrency: string) {
+			this.baseValue = baseValue;
+			this.baseCurrency = baseCurrency;
+			this.targetCurrency = targetCurrency;
+			this.#loadCurrencies();
+			this.#fetchRates();
+		}
+		async #fetchRates() {
+			const res = await fetch(
+				`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${this.baseCurrency}.json`
+			);
+			const resJSON = await res.json();
+			this.baseRates = resJSON[this.baseCurrency];
+		}
+
+		async #loadCurrencies() {
+			this.loading = true;
+			this.error = undefined;
+			try {
+				const res = await fetch(
+					'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json'
+				).then((r) => r.json());
+				this.currencies = res;
+			} catch {
+				this.error = 'An error has occurred';
+			}
+			this.loading = false;
+		}
+
+		#calculateTarget() {
+			return (
+				this.baseValue &&
+				this.baseRates[this.targetCurrency] &&
+				+(this.baseValue * this.baseRates[this.targetCurrency]).toFixed(3)
+			);
+		}
+		#calculateBase() {
+			return (
+				this.targetValue &&
+				this.baseRates[this.targetCurrency] &&
+				+(this.targetValue / this.baseRates[this.targetCurrency]).toFixed(3)
+			);
+		}
 	}
-	function updateTargetValue(value: number) {
-		targetValue = value;
-		baseValue = calculateBase();
-		console.log('Calculate Base value', baseValue);
-	}
-	function updateBaseCurrency(value: string) {
-		baseCurrency = value;
-		targetValue = calculateTarget();
-		console.log('Calculate Target value', targetValue);
-	}
-	function updateTargetCurrency(value: string) {
-		targetCurrency = value;
-		targetValue = calculateTarget();
-		console.log('Calculate Target value', targetValue);
-	}
+	const cc = new CurrencyConverter(1, 'usd', 'eur');
 </script>
 
-<div class="wrapper">
-	<div class="conversion">
-		<span class="base"
-			>{Number(1).toLocaleString('en-US', {
-				style: 'currency',
-				currency: baseCurrency,
-				currencyDisplay: 'name'
-			})} equals</span
-		>
-		<span class="target"
-			>{baseRates[targetCurrency].toLocaleString('en-US', {
-				style: 'currency',
-				currency: targetCurrency,
-				currencyDisplay: 'name'
-			})}</span
-		>
-	</div>
-	<div class="base">
-		<input
-			type="number"
-			value={baseValue}
-			oninput={(e) => {
-				updateBaseValue(+e.currentTarget.value);
-			}}
-		/>
-		<select
-			value={baseCurrency}
-			oninput={(e) => {
-				updateBaseCurrency(e.currentTarget.value);
-			}}
-		>
-			<option value="usd">United States Dollar</option>
-			<option value="eur">Euro</option>
-			<option value="gbp">Pound Sterling</option>
-		</select>
-	</div>
-	<div class="target">
-		<div class="target">
-			<input
-				value={targetValue}
-				type="number"
-				oninput={(e) => {
-					updateTargetValue(+e.currentTarget.value);
-				}}
-			/>
-			<select
-				value={targetCurrency}
-				oninput={(e) => {
-					updateTargetCurrency(e.currentTarget.value);
-				}}
+{#if cc.error}
+	<p>{cc.error}</p>
+{:else if cc.loading}
+	<p>Loading...</p>
+{:else}
+	<div class="wrapper">
+		<div class="conversion">
+			<span class="base"
+				>{Number(1).toLocaleString('en-US', {
+					style: 'currency',
+					currency: cc.baseCurrency,
+					currencyDisplay: 'name'
+				})} equals</span
 			>
-				<option value="usd">United States Dollar</option>
-				<option value="eur">Euro</option>
-				<option value="gbp">Pound Sterling</option>
+			<span class="target"
+				>{cc.baseRates[cc.targetCurrency]?.toLocaleString('en-US', {
+					style: 'currency',
+					currency: cc.targetCurrency,
+					currencyDisplay: 'name'
+				})}</span
+			>
+		</div>
+		<div class="base">
+			<input type="number" bind:value={cc.baseValue} />
+			<select bind:value={cc.baseCurrency}>
+				{#each Object.entries(cc.currencies) as [key, value]}
+					<option value={key}>{value || key}</option>
+				{/each}
 			</select>
 		</div>
+		<div class="target">
+			<div class="target">
+				<input bind:value={cc.targetValue} type="number" />
+				<select bind:value={cc.targetCurrency}>
+					{#each Object.entries(cc.currencies) as [key, value]}
+						<option value={key}>{value || key}</option>
+					{/each}
+				</select>
+			</div>
+		</div>
 	</div>
-</div>
-
+{/if}
 
 <style lang="scss">
 	.wrapper {
@@ -150,3 +170,4 @@
 		}
 	}
 </style>
+
