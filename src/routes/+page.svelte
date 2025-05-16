@@ -19,9 +19,10 @@
 			{ value: '=SUM(D2,D3,D4,D5)', bgColor: '#8e7eb6' }
 		]
 	]);
+	let data2 = $state([[]])
 </script>
 
-<Sheet {data} />
+<Sheet bind:data = {data} />
 
 
 <pre>
