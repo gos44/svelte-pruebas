@@ -1,16 +1,11 @@
 <script lang="ts">
-	import CurrencyConverter from '$lib/components/CurrencyConverter.svelte';
-
-	import CC from '$lib/Utils/currency-converter.svelte';
-
-	const cc = new CC(10, 'gbp', 'usd');
+	import ClickToCount from '$lib/Components/ClickToCount.svelte';
+	import DoubleClickToCount from '$lib/components/DoubleClickToCount.svelte';
+	
 </script>
 
-{cc.rate}
-{cc.baseCurrency}
-{cc.baseValue}
-{cc.targetValue}
-<CurrencyConverter />
+<ClickToCount />
+<DoubleClickToCount />
 
 <style>
 	:global {
@@ -20,3 +15,5 @@
 		}
 	}
 </style>
+
+

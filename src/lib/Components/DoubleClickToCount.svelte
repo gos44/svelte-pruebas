@@ -1,0 +1,28 @@
+<script lang="ts">
+	import createCounter from '$lib/utils/counter.svelte';
+	import Button from './Button.svelte';
+	let count = $state(0);
+	const counter = createCounter()
+</script>
+
+<div class="wrapper">
+	<h2>{counter.getValue()}</h2>
+	<Button ondblclick={counter.increment}>Increment</Button>
+	<Button --buttonBgColor="#fff" --buttonTextColor="#000" onclick={counter.reset}>Reset</Button>
+</div>
+
+
+<style>
+	.wrapper {
+		text-align: center;
+		background-color: #ff3e00;
+		padding: 20px;
+		border-radius: 10px;
+		margin-bottom: 10px;
+		h2 {
+			font-size: 60px;
+			margin: 0 0 20px;
+			line-height: 1;
+		}
+	}
+</style>
