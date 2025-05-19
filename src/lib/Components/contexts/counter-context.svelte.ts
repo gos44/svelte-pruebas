@@ -17,16 +17,6 @@ export function hasCounterContext() {
     return hasContext(key)
 }
 export function createCounterState(initial = 0) {
-    let count = $state(initial)
-    return{
-		get value() {
-			return count;
-		},
-		increment: () => {
-			count += 1;
-		},
-		reset: () => {
-			count = 0;
-		}
-	}
+    let cont = $state(initial)
+    return
 }

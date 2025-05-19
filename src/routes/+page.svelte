@@ -1,11 +1,19 @@
 <script lang="ts">
-	import konva from 'konva';
-	import {Stage ,Layer} from '$lib/Components/konva'
+	import { Stage, Layer, Rect } from '$lib/components/konva';
 </script>
 
-<Stage width={500} height={500} >
+<Stage width={500} height={500}>
 	<Layer>
-		<Rect />
+		<Rect
+			width={200}
+			height={200}
+			x={20}
+			y={40}
+			fill="purple"
+			stroke="yellow"
+			strokeWidth={3}
+			draggable
+		/>
 	</Layer>
 </Stage>
 
