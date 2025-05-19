@@ -1,12 +1,35 @@
 <script lang="ts">
-	import counter, { increment, reset } from '$lib/utils/counter.svelte';
+	import { getContext, hasContext } from 'svelte';
 	import Button from './Button.svelte';
+
+	const hasContentContext = hasContext('count')
+
+	function createLocalState(){
+		let count = $state(0)
+		return {
+		get value() {
+			return count;
+		},
+		increment: () => {
+			count += 1;
+		},
+		reset: () => {
+			count = 0;
+		}
+	}
+	}
+
+	let counter = hasContentContext ? getContext<{
+		value: number;
+		increment: () => void;
+		reset: () => void;
+	}>('count'): createLocalState();
 </script>
 
 <div class="wrapper">
 	<h2>{counter.value}</h2>
-	<Button onclick={increment}>Increment</Button>
-	<Button --buttonBgColor="#fff" --buttonTextColor="#000" onclick={reset}>Reset</Button>
+	<Button onclick={counter.increment}>Increment</Button>
+	<Button --buttonBgColor="#fff" --buttonTextColor="#000" onclick={counter.reset}>Reset</Button>
 </div>
 
 <style>
