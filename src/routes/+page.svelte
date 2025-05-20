@@ -5,15 +5,19 @@
 	let x = $state(180);
 	let y = $state(90);
 	let fill = $state('#A020F0');
-</script>
+	let stage: Stage
+	let layer: Layer
+	let rect: Rect
 
-<Stage width={innerWidth.current} height={(innerHeight.current || 0) / 2.5}>
-	<Layer
+</script>
+<Stage bind:this={stage} width={innerWidth.current} height={(innerHeight.current || 0) / 2.5}>
+	<Layer bind:this={layer}
 		onclick={(e) => {
 			console.log(e);
 		}}
 	>
 		<Rect
+			bind:this={rect}
 			ondragend={(e) => {
 				console.log(e);
 			}}
@@ -33,6 +37,14 @@
 		></Rect>
 	</Layer>
 </Stage>
+<button onclick={()=>{
+	console.log(stage)
+	console.log(layer)
+	console.log(rect.node.getAttrs())
+	rect.node.x(0)
+	
+
+}}>Log Info</button>
 {x}
 <input type="range" bind:value={x} min={0} max={300} />
 {y}
