@@ -1,28 +1,25 @@
 <script lang="ts">
 	import longpress from '$lib/actions/longpress.svelte';
 
-	let showButton =$state(true)
-	let duration = $state({value:300})
+	let showButton = $state(true);
+	let duration = $state(3000);
 </script>
 
-<label>
-	<input type="checkbox" bind:checked={showButton}/>
-	Togle
-</label>
+<label><input type="checkbox" bind:checked={showButton} /> Toggle</label>
 
-<label >
-<input type="range" bind:value={duration.value} max={4000} step={100}/>{duration.value}ms
+<label>
+	<input type="range" bind:value={duration} max={4000} step={100} />{duration}ms
 </label>
 
 {#if showButton}
-<button	
-use:longpress={()=>({duration})}
-onlongpress={()=>{
-	console.log('long onlongpress')
-}}>
-text
-</button>
+	<button
+		use:longpress={() => ({ duration })}
+		onlongpress={() => {
+			console.log('long pressed');
+		}}>Text</button
+	>
 {/if}
+
 <style>
 	:global {
 		body {
